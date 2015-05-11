@@ -19,19 +19,28 @@ class Snake():
 
     # To turn, we keep velocity variables for x and y direction, and then we sum it to the position
     # The snake will be always moving, so the event handler will only change the movement direction
+    # The snake cannot go directly to the opposite direction. The first if of these methods assure this
     def turn_left(self):
+        if self.x_velocity > 0:
+            return
         self.x_velocity = (-1)*self.width
         self.y_velocity = 0
 
     def turn_right(self):
+        if self.x_velocity < 0:
+            return
         self.x_velocity = self.width
         self.y_velocity = 0
 
     def turn_up(self):
+        if self.y_velocity > 0:
+            return
         self.y_velocity = (-1)*self.width
         self.x_velocity = 0
 
     def turn_down(self):
+        if self.y_velocity < 0:
+            return
         self.y_velocity = self.width
         self.x_velocity = 0
 
