@@ -2,7 +2,7 @@ __author__ = 'tales.cpadua'
 import pygame
 
 class Snake():
-    def __init__(self, display, pos_x, pos_y):
+    def __init__(self, display, pos_x=300, pos_y=300):
         self.color = (0,0,0)
         self.display = display
         self.block_size = 20
@@ -69,7 +69,6 @@ class Snake():
 
     #here we pause the snake movement. The better is to handle code in game object, but this is fine for now
     def pause(self):
-        print "Tried to pause"
         if self.paused is False:
             self.paused = True
             self.prev_x_vel = self.x_velocity
