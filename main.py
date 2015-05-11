@@ -23,8 +23,13 @@ def main():
     pygame.display.set_caption("Snake")
     pygame.display.update()
 
+    # create clock object to control game speed (FPS), and set fps to 15
+    # the fps variable can be changed to control game difficulty
+    clock = pygame.time.Clock()
+    fps = 15
+
     #call snake object
-    snake = Snake(game_display, 100, 100)
+    snake = Snake(game_display, 300, 300)
 
     while running:
         for event in pygame.event.get():
@@ -32,18 +37,23 @@ def main():
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
-                    snake.move_left()
+                    snake.turn_left()
                 if event.key == pygame.K_RIGHT:
-                    snake.move_right()
+                    snake.turn_right()
                 if event.key == pygame.K_UP:
-                    snake.move_up()
+                    snake.turn_up()
                 if event.key == pygame.K_DOWN:
-                    snake.move_down()
+                    snake.turn_down()
 
         #first you draw, then you update to see changes
         game_display.fill(white)
+        snake.move()
         snake.render()
         pygame.display.update()
+
+        #set fps
+        clock.tick(fps)
+
     pygame.quit()
     quit()
 
