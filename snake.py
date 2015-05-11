@@ -46,9 +46,17 @@ class Snake():
 
     # Here we sum the velocity to the position. Note that negative values will decrease the position value, since
     # sum negative number is the same as subtracting a positive one
-    def move(self):
+    def move(self, screen_width, screen_height):
         self.pos_x += self.x_velocity
         self.pos_y += self.y_velocity
+
+        #Check boundaries
+        if self.pos_x < 0 or self.pos_x > screen_width - self.width:
+            return False
+        if self.pos_y < 0 or self.pos_y > screen_height - self.height:
+            return False
+
+        return True
 
     #here we pause the snake movement. The better is to handle code in game object, but this is fine for now
     def pause(self):
