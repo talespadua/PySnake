@@ -1,6 +1,6 @@
 #Developed by Tales Carlos de Pádua
 
-#Based on PyGame turorial from YouTube channel thenewboston
+#Based on PyGame tutorial from YouTube channel thenewboston
 
 Snake game developed in Python 2.7 with PyGame
 
