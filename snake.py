@@ -12,6 +12,7 @@ class Snake():
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.render()
+        self.paused = False
 
     def render(self):
         pygame.draw.rect(self.display, self.color, [self.pos_x, self.pos_y, self.width, self.height])
@@ -39,3 +40,20 @@ class Snake():
     def move(self):
         self.pos_x += self.x_velocity
         self.pos_y += self.y_velocity
+
+    #here we pause the snake movement. The better is to handle code in game object, but this is fine for now
+    def pause(self):
+        print "Tried to pause"
+        if self.paused == False:
+            self.paused = True
+            self.prev_x_vel = self.x_velocity
+            self.prev_y_vel = self.y_velocity
+            self.x_velocity = 0
+            self.y_velocity = 0
+            return
+
+        if self.paused == True:
+            self.paused = False
+            self.x_velocity = self.prev_x_vel
+            self.y_velocity = self.prev_y_vel
+            return

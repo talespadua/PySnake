@@ -36,14 +36,18 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     snake.turn_left()
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     snake.turn_right()
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     snake.turn_up()
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     snake.turn_down()
+
+                #handle pause game
+                if event.key == pygame.K_ESCAPE:
+                    snake.pause()
 
         #first you draw, then you update to see changes
         game_display.fill(white)
