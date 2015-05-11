@@ -1,6 +1,7 @@
 __author__ = 'tales.cpadua'
 import pygame
 from snake import Snake
+import time
 
 class Game():
     red = (255, 0, 0)
@@ -23,7 +24,7 @@ class Game():
 
         # set clock for fps control
         self.clock = pygame.time.Clock()
-        self.fps = 15
+        self.fps = 20
 
         #instantiate snake
         self.snake = Snake(self.game_display)
@@ -52,20 +53,42 @@ class Game():
                     #handle pause game
                     if event.key == pygame.K_ESCAPE:
                         self.snake.pause()
+                        #self.pause_game()
 
             #first you draw, then you update to see changes
             self.game_display.fill(self.white)
-            if not self.snake.move(self.screen_width, self.screen_height):
-                self.running = False
+            self.snake.move()
+            #Check collision with boundaries
+            if self.check_collision():
+                self.put_message("You lose")
+                time.sleep(2)
+                self.exit_game()
+
             self.snake.render()
             pygame.display.update()
-
             #set fps
             self.clock.tick(self.fps)
 
-    def put_pause_message(self):
-        pause_text = self.game_font.render("Game Paused", True, self.red)
-        self.game_display.blit()
+    def check_collision(self):
+        if self.snake.pos_x < 0 or self.snake.pos_x > self.screen_width - self.snake.block_size:
+            return True
+        if self.snake.pos_y < 0 or self.snake.pos_y > self.screen_height - self.snake.block_size:
+            return True
+        return False
+
+    def put_message(self, message):
+        pause_text = self.game_font.render(message, True, self.red)
+        self.game_display.blit(pause_text, [self.screen_width/2, self.screen_height/2])
+        pygame.display.update()
+
+    def pause_game(self):
+        paused = True
+        while paused:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        paused = False
+            self.clock.tick(30)
 
 
     def exit_game(self):
