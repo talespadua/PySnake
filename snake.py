@@ -5,43 +5,52 @@ class Snake():
     def __init__(self, display, pos_x, pos_y):
         self.color = (0,0,0)
         self.display = display
-        self.width = 20
-        self.height = 20
+        self.block_size = 20
         self.x_velocity = 0
-        self.y_velocity = (-1)*self.width
+        self.y_velocity = (-1)*self.block_size
         self.pos_x = pos_x
         self.pos_y = pos_y
         self.render()
         self.paused = False
+        self.prev_x_vel = 0
+        self.prev_y_vel = 0
 
     def render(self):
-        pygame.draw.rect(self.display, self.color, [self.pos_x, self.pos_y, self.width, self.height])
+        pygame.draw.rect(self.display, self.color, [self.pos_x, self.pos_y, self.block_size, self.block_size])
 
     # To turn, we keep velocity variables for x and y direction, and then we sum it to the position
     # The snake will be always moving, so the event handler will only change the movement direction
     # The snake cannot go directly to the opposite direction. The first if of these methods assure this
     def turn_left(self):
-        if self.x_velocity > 0:
+        if self.paused:
             return
-        self.x_velocity = (-1)*self.width
+        elif self.x_velocity > 0:
+            return
+        self.x_velocity = (-1)*self.block_size
         self.y_velocity = 0
 
     def turn_right(self):
-        if self.x_velocity < 0:
+        if self.paused:
             return
-        self.x_velocity = self.width
+        elif self.x_velocity < 0:
+            return
+        self.x_velocity = self.block_size
         self.y_velocity = 0
 
     def turn_up(self):
-        if self.y_velocity > 0:
+        if self.paused:
             return
-        self.y_velocity = (-1)*self.width
+        elif self.y_velocity > 0:
+            return
+        self.y_velocity = (-1)*self.block_size
         self.x_velocity = 0
 
     def turn_down(self):
-        if self.y_velocity < 0:
+        if self.paused:
             return
-        self.y_velocity = self.width
+        elif self.y_velocity < 0:
+            return
+        self.y_velocity = self.block_size
         self.x_velocity = 0
 
     # Here we sum the velocity to the position. Note that negative values will decrease the position value, since
@@ -51,9 +60,9 @@ class Snake():
         self.pos_y += self.y_velocity
 
         #Check boundaries
-        if self.pos_x < 0 or self.pos_x > screen_width - self.width:
+        if self.pos_x < 0 or self.pos_x > screen_width - self.block_size:
             return False
-        if self.pos_y < 0 or self.pos_y > screen_height - self.height:
+        if self.pos_y < 0 or self.pos_y > screen_height - self.block_size:
             return False
 
         return True
@@ -61,7 +70,7 @@ class Snake():
     #here we pause the snake movement. The better is to handle code in game object, but this is fine for now
     def pause(self):
         print "Tried to pause"
-        if self.paused == False:
+        if self.paused is False:
             self.paused = True
             self.prev_x_vel = self.x_velocity
             self.prev_y_vel = self.y_velocity
@@ -69,7 +78,7 @@ class Snake():
             self.y_velocity = 0
             return
 
-        if self.paused == True:
+        if self.paused is True:
             self.paused = False
             self.x_velocity = self.prev_x_vel
             self.y_velocity = self.prev_y_vel
