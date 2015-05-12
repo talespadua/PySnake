@@ -33,24 +33,24 @@ class Game():
         self.clock = pygame.time.Clock()
         self.fps = 15
 
-        #instantiate snake
+        # instantiate snake
         self.snake = Snake(self.game_display, self.block_size)
 
-        #instantiate fruit
+        # instantiate fruit
         self.fruit = Fruit(self.screen_width, self.screen_height, self.block_size)
 
-        #set window name
+        # set window name
         pygame.display.set_caption("Snake")
 
     def main_loop(self):
         while self.running:
 
-            #Handle game over situation
+            # Handle game over situation
             if self.game_over:
                 self.game_over_dialog()
 
             for event in pygame.event.get():
-                #Handle exit through x corner button
+                # Handle exit through x corner button
                 if event.type == pygame.QUIT:
                     self.running = False
                 # Handle KeyDown events. Note that it will works with arrows and WASD
@@ -68,19 +68,20 @@ class Game():
                         self.snake.turn_down()
                         break
 
-                    #handle pause game
+                    # handle pause game
                     if event.key == pygame.K_ESCAPE:
                         self.pause_game()
 
-            #execute snake logic
+            # execute snake logic
             self.snake.move()
-            #Check collision with boundaries
+            # Check collision with boundaries
             if self.check_collision():
                 self.game_over = True
 
             #check if eated fruit
             if self.check_fruit_collision():
-                self.fruit.reposition(self.screen_width, self.screen_height)
+                self.snake.add_segment()
+                self.fruit.respawn(self.screen_width, self.screen_height, self.snake)
 
             #first you draw, then you update to see changes
             self.game_display.fill(self.white)
@@ -90,29 +91,41 @@ class Game():
             #set fps
             self.clock.tick(self.fps)
 
+    #this method checks collisions that result in game over
     def check_collision(self):
-        if self.snake.pos_x < 0 or self.snake.pos_x > self.screen_width - self.snake.block_size:
+        if self.snake.segments[0].pos_x < 0 or \
+                self.snake.segments[0].pos_x > self.screen_width - self.snake.block_size:
             return True
-        if self.snake.pos_y < 0 or self.snake.pos_y > self.screen_height - self.snake.block_size:
+        if self.snake.segments[0].pos_y < 0 or \
+                self.snake.segments[0].pos_y > self.screen_height - self.snake.block_size:
             return True
+
+        #check collision of the snake with itself
+        head_pos_x = self.snake.segments[0].pos_x
+        head_pos_y = self.snake.segments[0].pos_y
+        for s in self.snake.segments[1:]:
+            if head_pos_x == s.pos_x and head_pos_y == s.pos_y:
+                return True
         return False
 
+    #Check if snake eats fruit
     def check_fruit_collision(self):
-        if self.fruit.pos_y == self.snake.pos_y and self.fruit.pos_x == self.snake.pos_x:
+        if self.fruit.pos_y == self.snake.segments[0].pos_y and self.fruit.pos_x == self.snake.segments[0].pos_x:
             return True
         return False
 
+    #method for input general messages
     def put_message(self, message):
         pause_text = self.game_font.render(message, True, self.red)
-        self.game_display.blit(pause_text, [self.screen_width/2, self.screen_height/2])
+        self.game_display.blit(pause_text, [self.screen_width / 2, self.screen_height / 2])
 
-    #separate method so we can display slightly left from previous method
+    # separate method so we can display slightly left from previous method
     def game_over_message(self):
-        message = "Game over, press ENTER to continue or ESC to quit"
+        message = "Game over, press ENTER/SPACE to continue or ESC to quit"
         pause_text = self.game_font.render(message, True, self.red)
-        self.game_display.blit(pause_text, [self.screen_width/4, self.screen_height/2])
+        self.game_display.blit(pause_text, [self.screen_width / 5, self.screen_height / 2])
 
-    #handle pause situation
+    # handle pause situation
     def pause_game(self):
         paused = True
         self.put_message("Game is Paused")
@@ -126,7 +139,7 @@ class Game():
                         paused = False
             self.clock.tick(30)
 
-    #Handle game over situation
+    # Handle game over situation
     def game_over_dialog(self):
         while self.game_over:
             self.game_display.fill(self.white)
@@ -136,7 +149,7 @@ class Game():
                 if event.type == pygame.QUIT:
                     self.exit_game()
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_RETURN:
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_SPACE:
                         self.reset_game()
                         return
                     if event.key == pygame.K_ESCAPE:
@@ -144,20 +157,15 @@ class Game():
 
     #Reset variables to a new game in case of playing again
     def reset_game(self):
-        self.snake.pos_x = 300
-        self.snake.pos_y = 300
+        self.snake.reset_snake()
         self.game_over = False
-
-        self.fruit.reposition(self.screen_width, self.screen_height)
-        #check if fruit was created over snake
-        while self.check_fruit_collision():
-            self.fruit.reposition(self.screen_width, self.screen_height)
-
+        self.fruit.respawn(self.screen_width, self.screen_height, self.snake)
         pygame.display.flip()
 
+    #draw snake segments
     def draw_snake(self, snake):
-        #pygame.draw.rect(self.game_display, self.black, [snake.pos_x, snake.pos_y, snake.block_size, snake.block_size])
-        self.game_display.fill(self.snake.color, rect=[snake.pos_x, snake.pos_y, snake.block_size, snake.block_size])
+        for s in self.snake.segments:
+            self.game_display.fill(self.snake.color, rect=[s.pos_x, s.pos_y, snake.block_size, snake.block_size])
 
     def draw_fruit(self, fruit):
         self.game_display.fill(self.red, rect=[fruit.pos_x, fruit.pos_y, fruit.block_size, fruit.block_size])
