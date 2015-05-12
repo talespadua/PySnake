@@ -2,10 +2,10 @@ __author__ = 'tales.cpadua'
 import pygame
 
 class Snake():
-    def __init__(self, display, pos_x=300, pos_y=300):
+    def __init__(self, display, block_size, pos_x=300, pos_y=300):
         self.color = (0,0,0)
         self.display = display
-        self.block_size = 20
+        self.block_size = block_size
         self.x_velocity = 0
         self.y_velocity = (-1)*self.block_size
         self.pos_x = pos_x
