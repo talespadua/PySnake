@@ -51,7 +51,7 @@ class Snake():
 
     # Here we sum the velocity to the position. Note that negative values will decrease the position value, since
     # sum negative number is the same as subtracting a positive one
-    # 
+    #
     def move(self):
         next_x_pos = self.segments[0].pos_x + self.x_velocity
         next_y_pos = self.segments[0].pos_y + self.y_velocity
