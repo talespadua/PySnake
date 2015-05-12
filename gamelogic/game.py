@@ -1,12 +1,15 @@
 __author__ = 'tales.cpadua'
 import pygame
-from snake import Snake
-from fruit import Fruit
+
+from gameobjects.snake import Snake
+from gameobjects.fruit import Fruit
+
 
 class Game():
     red = (255, 0, 0)
     black = (0, 0, 0)
     white = (255, 255, 255)
+    green = (0, 255, 0)
 
     def __init__(self, screen_width, screen_height, block_size):
         # init pygame
@@ -54,12 +57,16 @@ class Game():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                         self.snake.turn_left()
+                        break
                     elif event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                         self.snake.turn_right()
+                        break
                     elif event.key == pygame.K_UP or event.key == pygame.K_w:
                         self.snake.turn_up()
+                        break
                     elif event.key == pygame.K_DOWN or event.key == pygame.K_s:
                         self.snake.turn_down()
+                        break
 
                     #handle pause game
                     if event.key == pygame.K_ESCAPE:
@@ -70,6 +77,10 @@ class Game():
             #Check collision with boundaries
             if self.check_collision():
                 self.game_over = True
+
+            #check if eated fruit
+            if self.check_fruit_collision():
+                self.fruit.reposition(self.screen_width, self.screen_height)
 
             #first you draw, then you update to see changes
             self.game_display.fill(self.white)
@@ -83,6 +94,11 @@ class Game():
         if self.snake.pos_x < 0 or self.snake.pos_x > self.screen_width - self.snake.block_size:
             return True
         if self.snake.pos_y < 0 or self.snake.pos_y > self.screen_height - self.snake.block_size:
+            return True
+        return False
+
+    def check_fruit_collision(self):
+        if self.fruit.pos_y == self.snake.pos_y and self.fruit.pos_x == self.snake.pos_x:
             return True
         return False
 
@@ -103,6 +119,8 @@ class Game():
         pygame.display.update()
         while paused:
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.exit_game()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
                         paused = False
@@ -115,6 +133,8 @@ class Game():
             self.game_over_message()
             pygame.display.update()
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.exit_game()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
                         self.reset_game()
@@ -129,11 +149,15 @@ class Game():
         self.game_over = False
 
         self.fruit.reposition(self.screen_width, self.screen_height)
+        #check if fruit was created over snake
+        while self.check_fruit_collision():
+            self.fruit.reposition(self.screen_width, self.screen_height)
+
         pygame.display.flip()
 
     def draw_snake(self, snake):
         #pygame.draw.rect(self.game_display, self.black, [snake.pos_x, snake.pos_y, snake.block_size, snake.block_size])
-        self.game_display.fill(self.black, rect=[snake.pos_x, snake.pos_y, snake.block_size, snake.block_size])
+        self.game_display.fill(self.snake.color, rect=[snake.pos_x, snake.pos_y, snake.block_size, snake.block_size])
 
     def draw_fruit(self, fruit):
         self.game_display.fill(self.red, rect=[fruit.pos_x, fruit.pos_y, fruit.block_size, fruit.block_size])

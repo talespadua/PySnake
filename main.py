@@ -1,7 +1,5 @@
 __author__ = 'tales.cpadua'
-import pygame
-from snake import Snake
-from game import Game
+from gamelogic.game import Game
 
 def main():
     game = Game(800, 600, 20)
